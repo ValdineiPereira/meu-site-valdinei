@@ -1,6 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 
+// --- Home Page ---
+const HomePage = () => (
+    <div className="home-hero">
+        <div className="hero-content">
+            <p className="hero-intro">Prazer, eu sou</p>
+            <h1 className="hero-title">Valdinei Pereira</h1>
+            <p className="hero-subtitle">Escritor, Pastor e Palestrante</p>
+            <div className="hero-socials">
+                <a href="#" aria-label="Spotify"><i className="fab fa-spotify"></i></a>
+                <a href="#" aria-label="Facebook"><i className="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+);
+
+
 // --- Google Calendar Events Page ---
 const EventsPage = () => {
     const [events, setEvents] = useState([]);
@@ -9,9 +26,6 @@ const EventsPage = () => {
 
     useEffect(() => {
         const fetchEvents = async () => {
-            // A chamada para a API agora é feita para um endpoint seguro no backend
-            // que protege a chave de API. Este endpoint é responsável por
-            // buscar os eventos do mês atual no Google Calendar.
             const url = '/api/events'; 
 
             try {
@@ -48,7 +62,6 @@ const EventsPage = () => {
             </div>
 
             <div className="calendar-embed-container">
-                 {/* O iframe continua usando o ID público da agenda, o que é seguro. */}
                 <iframe 
                     src="https://calendar.google.com/calendar/embed?src=585448fd1afbc1ad4d5ac5c7b173273f0570deba78c69f7be0556c0597372834%40group.calendar.google.com" 
                     className="calendar-embed"
@@ -113,9 +126,13 @@ const ContactPage = () => {
 
     return (
         <div className="container contact-page">
+            <div className="page-header">
+                <h1>Contato</h1>
+                <p>Será um prazer falar com você!</p>
+            </div>
             <div className="contact-content">
                 <div className="contact-info">
-                     <h2>Será um prazer falar com você!</h2>
+                     <h2>Tire suas dúvidas</h2>
                      <p>
                          Seja para compartilhar uma palavra, tirar uma dúvida ou até mesmo nos visitar em
                          nossa igreja, sinta-se à vontade para enviar sua mensagem. A vida é feita de encontros,
@@ -151,6 +168,32 @@ const ContactPage = () => {
     );
 };
 
+// --- Placeholder Pages ---
+const AboutPage = () => <div className="container"><div className="page-header"><h1>Quem Sou</h1><p>Esta página está em construção.</p></div></div>;
+const BooksPage = () => <div className="container"><div className="page-header"><h1>Meus Livros</h1><p>Esta página está em construção.</p></div></div>;
+
+
+// --- Header Component ---
+const Header = ({ activePage, setActivePage }) => (
+    <header className="site-header">
+        <div className="header-container">
+            <div className="site-logo">
+                <a href="#home" onClick={() => setActivePage('home')}>VALDINEI PEREIRA</a>
+            </div>
+            <nav className="main-nav">
+                <a href="#home" className={activePage === 'home' ? 'active' : ''} onClick={() => setActivePage('home')}>Home</a>
+                <a href="#about" className={activePage === 'about' ? 'active' : ''} onClick={() => setActivePage('about')}>Quem Sou</a>
+                <a href="#books" className={activePage === 'books' ? 'active' : ''} onClick={() => setActivePage('books')}>Meus Livros</a>
+                <a href="#events" className={activePage === 'events' ? 'active' : ''} onClick={() => setActivePage('events')}>Agenda</a>
+                <a href="#contact" className={activePage === 'contact' ? 'active' : ''} onClick={() => setActivePage('contact')}>Contato</a>
+            </nav>
+            <div className="header-cta">
+                <a href="#contact" className="cta-button" onClick={() => setActivePage('contact')}>Vamos Conversar</a>
+            </div>
+        </div>
+    </header>
+);
+
 // --- Footer Component ---
 const Footer = () => (
     <footer className="app-footer">
@@ -165,10 +208,10 @@ const Footer = () => (
             <div className="footer-section">
                 <h4>Menu do Site</h4>
                 <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Quem Sou</a></li>
-                    <li><a href="#">Meus Livros</a></li>
-                    <li><a href="#">Categorias</a></li>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">Quem Sou</a></li>
+                    <li><a href="#books">Meus Livros</a></li>
+                    <li><a href="#events">Agenda</a></li>
                 </ul>
             </div>
             <div className="footer-section">
@@ -176,7 +219,7 @@ const Footer = () => (
                 <ul>
                     <li><a href="#">Perguntas Frequentes</a></li>
                     <li><a href="#">Política de Privacidade</a></li>
-                    <li><a href="#">Entre em Contato</a></li>
+                    <li><a href="#contact">Entre em Contato</a></li>
                 </ul>
             </div>
             <div className="footer-section">
@@ -199,33 +242,42 @@ const Footer = () => (
 );
 
 
-// --- Main App Component with Navigation ---
+// --- Main App Component with Router ---
 const App = () => {
-    const [activePage, setActivePage] = useState('events');
+    // Roteamento simples baseado no hash da URL
+    const [activePage, setActivePage] = useState(window.location.hash.substring(1) || 'home');
+
+    useEffect(() => {
+        const handleHashChange = () => {
+            setActivePage(window.location.hash.substring(1) || 'home');
+        };
+
+        window.addEventListener('hashchange', handleHashChange);
+        return () => window.removeEventListener('hashchange', handleHashChange);
+    }, []);
+
+    const renderPage = () => {
+        switch (activePage) {
+            case 'home':
+                return <HomePage />;
+            case 'about':
+                return <AboutPage />;
+            case 'books':
+                return <BooksPage />;
+            case 'events':
+                return <EventsPage />;
+            case 'contact':
+                return <ContactPage />;
+            default:
+                return <HomePage />;
+        }
+    };
 
     return (
         <>
-            <header className="app-header">
-                <nav className="tabs">
-                    <button 
-                        className={`tab ${activePage === 'events' ? 'active' : ''}`} 
-                        onClick={() => setActivePage('events')}
-                        aria-pressed={activePage === 'events'}
-                    >
-                        Eventos
-                    </button>
-                    <button 
-                        className={`tab ${activePage === 'contact' ? 'active' : ''}`} 
-                        onClick={() => setActivePage('contact')}
-                        aria-pressed={activePage === 'contact'}
-                    >
-                        Contato
-                    </button>
-                </nav>
-            </header>
+            <Header activePage={activePage} setActivePage={setActivePage} />
             <main>
-                {activePage === 'events' && <EventsPage />}
-                {activePage === 'contact' && <ContactPage />}
+                {renderPage()}
             </main>
             <Footer />
         </>

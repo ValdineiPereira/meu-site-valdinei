@@ -37,55 +37,140 @@ body {
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem 0;
+    padding: 4rem 0;
 }
 
-/* Header & Navigation */
-.app-header {
-    padding: 1rem 0;
-    display: flex;
-    justify-content: center;
-    border-bottom: 1px solid var(--border-color);
+/* --- New Site Header --- */
+.site-header {
+    padding: 1.5rem 5%;
     position: sticky;
     top: 0;
     background-color: rgba(26, 26, 26, 0.8);
     backdrop-filter: blur(10px);
-    z-index: 10;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.tabs {
+.header-container {
     display: flex;
-    gap: 1rem;
-    background-color: var(--card-bg);
-    padding: 0.5rem;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-.tab {
-    padding: 0.75rem 1.5rem;
-    cursor: pointer;
-    background-color: transparent;
-    border: none;
+.site-logo a {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--text-color);
+    text-decoration: none;
+    letter-spacing: 1px;
+}
+
+.main-nav {
+    display: flex;
+    gap: 2.5rem;
+}
+
+.main-nav a {
     color: var(--muted-color);
-    font-size: 1rem;
+    text-decoration: none;
     font-weight: 700;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    font-family: var(--font-family);
+    font-size: 1rem;
+    transition: color 0.3s ease;
+    padding: 0.5rem 0;
+    position: relative;
 }
 
-.tab:hover {
-    background-color: #3a3a3a;
+.main-nav a:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: var(--accent-color);
+    transition: all 0.3s ease;
+}
+
+.main-nav a:hover,
+.main-nav a.active {
     color: var(--text-color);
 }
 
-.tab.active {
-    background-color: var(--accent-color);
-    color: var(--bg-color);
-    box-shadow: 0 4px 14px rgba(221, 177, 70, 0.25);
+.main-nav a:hover:after,
+.main-nav a.active:after {
+    width: 100%;
+    left: 0;
 }
 
+.header-cta .cta-button {
+    background-color: var(--accent-color);
+    color: var(--bg-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.header-cta .cta-button:hover {
+    background-color: #fff;
+    transform: scale(1.05);
+}
+
+
+/* --- New Home Page Hero --- */
+.home-hero {
+    /* Você pode substituir esta cor por uma imagem de fundo */
+    background: linear-gradient(rgba(26, 26, 26, 0.7), rgba(26, 26, 26, 0.9)), url('https://images.unsplash.com/photo-1531741403586-c19236e585f6?q=80&w=2564&auto=format&fit=crop') no-repeat center center/cover;
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.hero-content {
+    max-width: 800px;
+}
+
+.hero-intro {
+    font-size: 1.5rem;
+    color: var(--muted-color);
+}
+
+.hero-title {
+    font-size: 5rem;
+    font-weight: 900;
+    color: #fff;
+    margin: 0.5rem 0;
+    letter-spacing: 2px;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    font-weight: 700;
+}
+
+.hero-socials {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.hero-socials a {
+    color: var(--text-color);
+    font-size: 1.8rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.hero-socials a:hover {
+    color: var(--accent-color);
+    transform: scale(1.2);
+}
 
 /* Main Content */
 main {
@@ -191,7 +276,7 @@ main {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 3rem;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .contact-info h2 {
@@ -384,6 +469,12 @@ main {
 @media (max-width: 992px) {
     .contact-content {
         grid-template-columns: 1fr;
+    }
+    .main-nav, .header-cta {
+        display: none; /* Simplificação para mobile, menu hamburguer seria o próximo passo */
+    }
+    .hero-title {
+        font-size: 3rem;
     }
 }
 
