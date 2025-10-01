@@ -26,17 +26,21 @@ const EventsPage = () => {
 
     useEffect(() => {
         const fetchEvents = async () => {
+            // A URL agora aponta para nossa função segura na Vercel
             const url = '/api/events'; 
 
             try {
                 const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`Ocorreu um erro ao buscar os eventos. Por favor, tente novamente mais tarde.`);
-                }
                 const data = await response.json();
+
+                if (!response.ok) {
+                    // Se a API retornar um erro (ex: chaves erradas), mostramos a mensagem dela
+                    throw new Error(data.error || `Ocorreu um erro ao buscar os eventos.`);
+                }
+                
                 setEvents(data.items || []);
             } catch (err) {
-                const errorMessage = err instanceof Error ? err.message : 'Não foi possível carregar os eventos. Verifique a conexão ou tente novamente.';
+                const errorMessage = err instanceof Error ? err.message : 'Não foi possível carregar os eventos.';
                 setError(errorMessage);
                 console.error(err);
             } finally {
@@ -48,7 +52,7 @@ const EventsPage = () => {
     }, []);
 
     const formatDate = (dateString: string) => {
-        const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' };
         return new Date(dateString).toLocaleString('pt-BR', options);
     }
     
@@ -63,7 +67,7 @@ const EventsPage = () => {
 
             <div className="calendar-embed-container">
                 <iframe 
-                    src="https://calendar.google.com/calendar/embed?src=585448fd1afbc1ad4d5ac5c7b173273f0570deba78c69f7be0556c0597372834%40group.calendar.google.com" 
+                    src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FSao_Paulo&bgcolor=%231A1A1A&src=NTg1NDQ4ZmQxYWZiYzFhZDRkNWFjNWM3YjE3MzI3M2YwNTcwZGViYTc4YzY5ZjdiZTA1NTZjMDU5NzM3MjgzNEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%23DDB146" 
                     className="calendar-embed"
                     width="800" 
                     height="600" 
@@ -208,10 +212,10 @@ const Footer = () => (
             <div className="footer-section">
                 <h4>Menu do Site</h4>
                 <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">Quem Sou</a></li>
-                    <li><a href="#books">Meus Livros</a></li>
-                    <li><a href="#events">Agenda</a></li>
+                    <li><a href="#home" onClick={() => window.location.hash = 'home'}>Home</a></li>
+                    <li><a href="#about" onClick={() => window.location.hash = 'about'}>Quem Sou</a></li>
+                    <li><a href="#books" onClick={() => window.location.hash = 'books'}>Meus Livros</a></li>
+                    <li><a href="#events" onClick={() => window.location.hash = 'events'}>Agenda</a></li>
                 </ul>
             </div>
             <div className="footer-section">
@@ -219,7 +223,7 @@ const Footer = () => (
                 <ul>
                     <li><a href="#">Perguntas Frequentes</a></li>
                     <li><a href="#">Política de Privacidade</a></li>
-                    <li><a href="#contact">Entre em Contato</a></li>
+                    <li><a href="#contact" onClick={() => window.location.hash = 'contact'}>Entre em Contato</a></li>
                 </ul>
             </div>
             <div className="footer-section">
@@ -244,15 +248,18 @@ const Footer = () => (
 
 // --- Main App Component with Router ---
 const App = () => {
-    // Roteamento simples baseado no hash da URL
-    const [activePage, setActivePage] = useState(window.location.hash.substring(1) || 'home');
+    const getInitialPage = () => window.location.hash.substring(1) || 'home';
+    const [activePage, setActivePage] = useState(getInitialPage);
 
     useEffect(() => {
         const handleHashChange = () => {
-            setActivePage(window.location.hash.substring(1) || 'home');
+            setActivePage(getInitialPage());
         };
 
         window.addEventListener('hashchange', handleHashChange);
+        // Set initial page on load
+        handleHashChange();
+
         return () => window.removeEventListener('hashchange', handleHashChange);
     }, []);
 
