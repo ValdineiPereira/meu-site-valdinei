@@ -1,4 +1,4 @@
-// Cole este código exatamente como está no arquivo: /api/events.js
+// Arquivo: /api/events.js
 
 export default async function handler(request, response) {
   // 1. Pegar as chaves secretas do ambiente seguro da Vercel
@@ -24,14 +24,15 @@ export default async function handler(request, response) {
     if (!googleResponse.ok) {
       const errorBody = await googleResponse.text();
       console.error(`Google API Error: ${googleResponse.status} ${googleResponse.statusText}`, errorBody);
-      throw new Error('Falha ao buscar eventos do Google Calendar.');
+      throw new Error('Falha ao buscar eventos do Google Calendar a partir do servidor.');
     }
     
     const data = await googleResponse.json();
     
     // 4. Enviar os dados de volta para o navegador do visitante
-    // Adiciona cabeçalhos de CORS para permitir a chamada
+    // Adiciona cabeçalhos para permitir a chamada de qualquer origem (CORS)
     response.setHeader('Access-Control-Allow-Origin', '*');
+    response.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     response.status(200).json(data);
 
   } catch (error) {
